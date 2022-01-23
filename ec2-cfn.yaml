@@ -1,0 +1,78 @@
+#AWSTemplateFormatVersion: "2010-09-09"
+#Description: A sample template
+#Paramaters:
+#  Type: "String"
+#  Dafult: "ami-79fd7eee"
+#  Description: "ami-id"
+#  Type: "String"
+#  Dafult: "testkey"
+#  Description: "KeyName"
+#Resources:
+#  MyEC2Instance:
+#    Type: AWS::EC2::Instance
+#  Metadata:
+#    AWS:ClouFormation:Init
+#      configSets:
+#        default:
+#          -01_setupconfighp
+#          -02_config_amazon_cloudwatch_agent
+#          -restart_amazon_cloudwatch_agent
+
+#  Properties:
+#    ImageId: "ami-79fd7eee"
+#    KeyName: "testkey"
+#    BlockDeviceMappings:
+#    - DeviceName: "/dev/sdm"
+#      Ebs:
+#        VolumeType: "io1"
+#        Iops: "200"
+#        DeleteOnTermination: "false"
+#        VolumeSize: "20"
+#    - DeviceName: "/dev/sdk"
+#      NoDevice: {}
+
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  SubnetID:
+    Type: AWS::EC2::Subnet::Id
+    Default: "subnet-44e1ef48"
+    Description: Subnet to deploy EC2 instance into
+  SecurityGroupIDs:
+    Type: List<AWS::EC2::SecurityGroup::Id>
+    Default: "sg-e57bd390"
+    Description: List of Security Groups to add to EC2 instance
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Default: "ec2test"
+    Description: >-
+      Name of an existing EC2 KeyPair to enable SSH access to the instance
+  InstanceType:
+    Description: EC2 instance type
+    Type: String
+    Default: t2.micro
+  ImageId:
+    Description: EC2 instance ImageId
+    Type: String
+    Default: ami-08e4e35cccc6189f4
+
+Resources:
+  MyEC2Instance:
+    Type: AWS::EC2::Instance
+#    Mappings:
+#      AWSRegionToAMI:
+#        us-east-1:
+    Properties:
+      ImageId: !Ref ImageId
+      InstanceType: !Ref InstanceType
+      SecurityGroupIds: !Ref SecurityGroupIDs
+      KeyName: !Ref KeyName
+      SubnetId: !Ref SubnetID
+      BlockDeviceMappings:
+      - DeviceName: "/dev/sdm"
+        Ebs:
+          VolumeType: "io1"
+          Iops: "200"
+          DeleteOnTermination: "false"
+          VolumeSize: "20"
+      - DeviceName: "/dev/sdk"
+        NoDevice: {}
